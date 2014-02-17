@@ -37,10 +37,8 @@ function bindClipboardCopy() {
             $copy.poshytip('hideDelayed', 200);
         });
 
-        var $editable = $("#editable");
-
-
-        $editable.poshytip({
+        // 显示的内容为元素的title
+        $("#editable").poshytip({
             className: 'tip-green',
             offsetX: -5,
             offsetY: 20,
@@ -87,26 +85,52 @@ $(document).ready(function () {
         hit(getUploadStaticImage);
     }
 
-    $("#editable").on("paste", function () {
+    var $editable = $("#editable");
+    $editable.on("paste", function () {
         var ele = event.clipboardData.items;
         if (ele) {
             for (var i = 0; i < ele.length; ++i) {
                 if (ele[i].kind == 'file' && ele[i].type.indexOf('image/') !== -1) {
-                    var blob = ele[i].getAsFile();
-
-                    var ticket = $.flickr().upload(blob);
-                    updateUploadStaticImage(ticket);
-
-                    window.URL = window.URL || window.webkitURL;
-                    var blobUrl = window.URL.createObjectURL(blob);
-
-                    $('<img />').attr('src', blobUrl).css("max-width", "98%").appendTo("#editable");
+                    handleUploadImage(ele[i].getAsFile());
                 }
             }
         }
 
         // 阻止默认行为
         event.preventDefault();
+    });
+
+    function handleUploadImage(blob) {
+        var ticket = flickr.upload(blob);
+        updateUploadStaticImage(ticket);
+
+        window.URL = window.URL || window.webkitURL;
+        var blobUrl = window.URL.createObjectURL(blob);
+
+        $('<img />').attr('src', blobUrl).css("max-width", "98%").appendTo("#editable");
+    }
+
+    $editable.on("dragover", function () {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    });
+    $editable.on("drop", function () {
+        event.stopPropagation();
+        event.preventDefault();
+
+        var files = event.dataTransfer.files;
+
+        for (var index in files) {
+            var f = files[index];
+            // 只处理图片
+            if (f.type && !f.type.match('image.*')) {
+                continue;
+            }
+            var blob = f.slice();
+            blob.type = f.type;
+            handleUploadImage(blob);
+        }
     });
 
 });

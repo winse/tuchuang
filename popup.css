@@ -71,6 +71,7 @@ div#editable {
     min-height: 300px;
     border: 1px dashed blue;
     margin: 10px 0 10px;
+    padding: 20px;
     text-align: center;
 }
 
