@@ -9,7 +9,7 @@
     },
     "browser_action": {
         "default_title": "Upload Image to Flickr.",
-        "default_icon": "icon_32.png",
+        "default_icon": "image/icon_32.png",
         "default_popup": "popup.html"
     },
     "manifest_version": 2

@@ -3,6 +3,7 @@ function bindClipboardCopy() {
     if (chrome.extension) {
         $copy.click(function () {
             chrome.extension.getBackgroundPage().copy($("#callback input").val());
+            showCopyTip("已复制.")
         });
     } else {
         // @see http://www.steamdev.com/zclip/
@@ -17,35 +18,35 @@ function bindClipboardCopy() {
                 }
             }
         );
-
-        $copy.poshytip({
-            content: '点击复制链接.',
-            className: 'tip-green',
-//            allowTipHover: false,
-            showOn: 'none',
-            alignTo: 'target',
-            alignX: 'inner-left',
-            offsetX: 5,
-            offsetY: 5
-        });
-
-        // http://vadikom.com/demos/poshytip/
-        $copy.mouseover(function () {
-            showCopyTip('复制链接.');
-        });
-        $copy.mouseout(function () {
-            $copy.poshytip('hideDelayed', 200);
-        });
-
-        // 显示的内容为元素的title
-        $("#editable").poshytip({
-            className: 'tip-green',
-            offsetX: -5,
-            offsetY: 20,
-            followCursor: true,
-            slide: false
-        });
     }
+
+    $copy.poshytip({
+        content: '点击复制链接.',
+        className: 'tip-green',
+//            allowTipHover: false,
+        showOn: 'none',
+        alignTo: 'target',
+        alignX: 'inner-left',
+        offsetX: 5,
+        offsetY: 5
+    });
+
+    // http://vadikom.com/demos/poshytip/
+    $copy.mouseover(function () {
+        showCopyTip('复制链接.');
+    });
+    $copy.mouseout(function () {
+        $copy.poshytip('hideDelayed', 200);
+    });
+
+    // 显示的内容为元素的title
+    $("#editable").poshytip({
+        className: 'tip-green',
+        offsetX: -5,
+        offsetY: 20,
+        followCursor: true,
+        slide: false
+    });
 }
 
 function showCopyTip(mesg) {
@@ -57,6 +58,10 @@ function showCopyTip(mesg) {
 $(document).ready(function () {
 
     var flickr = $.flickr();
+
+    var $editable = $("#editable");
+    var $url = $("#callback input");
+
     // FIXME 暂时注释掉，有时没网络很慢！
     /*    var user = flickr.user();
      if (user) {
@@ -67,7 +72,7 @@ $(document).ready(function () {
     bindClipboardCopy();
 
     function getUploadStaticImage(photoid) {
-        $("#callback input").val(flickr.photo(photoid));
+        $url.val(flickr.photo(photoid));
     }
 
     function updateUploadStaticImage(ticket) {
@@ -85,13 +90,12 @@ $(document).ready(function () {
         hit(getUploadStaticImage);
     }
 
-    var $editable = $("#editable");
     $editable.on("paste", function () {
         var ele = event.clipboardData.items;
         if (ele) {
             for (var i = 0; i < ele.length; ++i) {
                 if (ele[i].kind == 'file' && ele[i].type.indexOf('image/') !== -1) {
-                    handleUploadImage(ele[i].getAsFile());
+                    upload(ele[i].getAsFile());
                 }
             }
         }
@@ -100,7 +104,7 @@ $(document).ready(function () {
         event.preventDefault();
     });
 
-    function handleUploadImage(blob) {
+    function upload(blob) {
         var ticket = flickr.upload(blob);
         updateUploadStaticImage(ticket);
 
@@ -115,6 +119,7 @@ $(document).ready(function () {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'copy';
     });
+
     $editable.on("drop", function () {
         event.stopPropagation();
         event.preventDefault();
@@ -124,12 +129,12 @@ $(document).ready(function () {
         for (var index in files) {
             var f = files[index];
             // 只处理图片
-            if (f.type && !f.type.match('image.*')) {
+            if (f.type || !f.type.match('image.*')) {
                 continue;
             }
             var blob = f.slice();
             blob.type = f.type;
-            handleUploadImage(blob);
+            upload(blob);
         }
     });
 

@@ -1,19 +1,13 @@
 * {
     margin: 0px;
     padding: 0px;
+    font-size: 16px;
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, sans-serif;
 }
 
 body {
     overflow: hidden;
-    padding: 5px;
     background: white;
-}
-
-section {
-    min-width: 300px;
-    width: 98%;
-    position: relative;
-    margin: 0 auto;
 }
 
 p {
@@ -22,12 +16,52 @@ p {
     margin: 1em 0;
 }
 
-div:first-child {
-    margin-top: 0px;
+#head {
+    background-color: rgba(0, 0, 0, 0.85);
+    width: 100%;
+    z-index: 408;
 }
 
-div#head, div#callback {
-    padding: 1px 3px;
+#head a {
+    display: block;
+    text-decoration: none;
+}
+
+a:hover {
+    color: white;
+    background-color: rgba(255, 30, 8, 0.43);
+}
+
+#head #userinfo {
+    white-space: nowrap;
+    text-align: center;
+    position: absolute;
+    color: rgb(255, 255, 255);
+    line-height: 50px;
+    padding: 0 20px;
+    font-size: 17px;
+    right: 8px;
+    top: 5px;
+    z-index: 299;
+}
+
+/* 特殊字体 https://developers.google.com/fonts/docs/getting_started?hl=zh-CN&csw=1 */
+#head #app {
+    font-family: "Kaushan Script", "Microsoft Yahei", sans-serif;
+    font-size: 36px;
+    text-shadow: 4px 4px 4px #aaa;
+    color: blue;
+}
+
+#upload {
+    min-width: 300px;
+    width: 98%;
+    position: relative;
+    margin: 0 auto;
+}
+
+#callback {
+    padding: 3px 5px;
     font-family: sans-serif;
     font-size: 0.8em;
     /* min-width: 100px; */
@@ -35,17 +69,8 @@ div#head, div#callback {
     background: #cccccc;
 }
 
-#callback > * {
-    display: block;
-}
-
 #callback input {
-    width: 100%;
-}
-
-#callback table, #callback tbody, #callback tr {
-    display: block;
-    width: 100%
+    width: 100%; /*把padding左右设置为0*/
 }
 
 #callback td {
@@ -54,49 +79,35 @@ div#head, div#callback {
 
 #callback label,
 #callback button {
-    width: 65px;
-    display: inline-block
+    display: inline-block;
+    padding: 2px 0;
 }
 
-div#editable {
+#callback label {
+    width: 80px;
+}
+
+#callback button {
+    width: 60px;
+}
+
+#callback input {
+    padding: 6px 0px;
+    border: none;
+    box-shadow: 0 0 3px #333 inset;
+    border-radius: 5px;
+}
+
+#editable {
     cursor: pointer;
     background: rgba(196, 168, 121, 0.51);
-}
-
-div#editable:hover {
-    background: #aaaaaa;
-}
-
-div#editable {
     min-height: 300px;
     border: 1px dashed blue;
-    margin: 10px 0 10px;
+    margin: -1px 0 10px;
     padding: 20px;
     text-align: center;
 }
 
-#head {
-    padding: 4px;
-}
-
-#head > * {
-    display: inline;
-}
-
-#head #userinfo {
-    color: #999;
-    white-space: nowrap;
-    text-align: center;
-    position: absolute;
-    right: 8px;
-    top: 3px;
-    z-index: 299;
-}
-
-/* 特殊字体 https://developers.google.com/fonts/docs/getting_started?hl=zh-CN&csw=1 */
-#head header {
-    font-family: "Kaushan Script", "Microsoft Yahei", sans-serif;
-    font-size: 36px;
-    text-shadow: 4px 4px 4px #aaa;
-    color: blue;
+#editable:hover {
+    background: #aaaaaa;
 }
