@@ -129,7 +129,7 @@ $(document).ready(function () {
         for (var index in files) {
             var f = files[index];
             // 只处理图片
-            if (f.type || !f.type.match('image.*')) {
+            if (!f.type || !f.type.match('image.*')) {
                 continue;
             }
             var blob = f.slice();
