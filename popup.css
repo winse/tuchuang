@@ -19,15 +19,17 @@ p {
 #head {
     background-color: rgba(0, 0, 0, 0.85);
     width: 100%;
-    z-index: 408;
+    min-width: 325px;
+    z-index: 165;
 }
 
 #head a {
     display: block;
+    font-weight: bolder;
     text-decoration: none;
 }
 
-a:hover {
+#head a:hover {
     color: white;
     background-color: rgba(255, 30, 8, 0.43);
 }
@@ -41,8 +43,8 @@ a:hover {
     padding: 0 20px;
     font-size: 17px;
     right: 8px;
-    top: 5px;
-    z-index: 299;
+    top: 3px;
+    z-index: 219;
 }
 
 /* 特殊字体 https://developers.google.com/fonts/docs/getting_started?hl=zh-CN&csw=1 */
@@ -60,54 +62,84 @@ a:hover {
     margin: 0 auto;
 }
 
+table {
+    border-spacing: 0px;
+}
+
 #callback {
-    padding: 3px 5px;
     font-family: sans-serif;
-    font-size: 0.8em;
     /* min-width: 100px; */
     margin-top: 1px;
-    background: #cccccc;
+    margin-bottom: 5px;
+    margin-left: 10px; /*补input的-10px left*/
 }
 
 #callback input {
-    width: 100%; /*把padding左右设置为0*/
+    width: 100%; /*需要把padding左右设置为0*/
 }
 
 #callback td {
     position: relative;
 }
 
-#callback label,
-#callback button {
+#callback input, #callback .button {
+    font-weight: bolder;
+    padding-top: 10px;
+    padding-bottom: 8px;
+    border: none;
+    box-shadow: 0 0 2px #6a6a6a inset;
+}
+
+#callback .button {
     display: inline-block;
-    padding: 2px 0;
-}
-
-#callback label {
-    width: 80px;
-}
-
-#callback button {
-    width: 60px;
+    width: 75px;
+    color: white;
+    background: #00aee1;
+    text-align: center;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 #callback input {
-    padding: 6px 0px;
-    border: none;
-    box-shadow: 0 0 3px #333 inset;
-    border-radius: 5px;
+    color: #919191;
+    margin-left: -10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
 }
 
 #editable {
     cursor: pointer;
-    background: rgba(196, 168, 121, 0.51);
     min-height: 300px;
-    border: 1px dashed blue;
-    margin: -1px 0 10px;
+    /*background: rgba(196, 168, 121, 0.51);
+    border: 1px dashed blue;*/
+    margin: 10px 0;
     padding: 20px;
     text-align: center;
+}
+
+#editable img {
+    max-width: 80%;
 }
 
 #editable:hover {
     background: #aaaaaa;
 }
+
+#editable:focus {
+    filter: alpha(opacity=50); /*IE滤镜，透明度50%*/
+    -moz-opacity: 0.5; /*Firefox私有，透明度50%*/
+    opacity: 0.5; /*其他，透明度50%*/
+}
+
+#editable.enable {
+    background: #00a0ea;
+}
+
+#editable.disabled {
+    background: #cccccc;
+}
+
+
+

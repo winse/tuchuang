@@ -1,19 +1,56 @@
+var $copy = $("#callback .copy");
+var $editable = $("#editable");
+
+var flickr = $.flickr();
+var $url = $("#callback input");
+var $image = $("#editable img");
+
+var uploadStatus = (function () {
+    var _status = "OK";
+
+    var op = {
+        "reset": function () {
+            _status = ''; // 出现异常可以重置！
+            uploadStatus.update();
+        },
+        "update": function () {
+            switch (_status) {
+                case "OK":
+                    $editable.poshytip('update', "正在上传...");
+                    _status = "UP";
+                    break;
+                case "UP":
+                    $editable.poshytip('update', "上传完成！点击复制按钮拷贝链接！");
+                    _status = "F";
+                    setTimeout(uploadStatus.update, 2000);
+                    break;
+                default:
+                    $editable.poshytip('update', "把图片粘贴到这里.");
+                    _status = "OK";
+            }
+            $editable.poshytip('show');
+        }
+    }
+
+    return op;
+
+})();
+
 function bindClipboardCopy() {
-    var $copy = $("#callback button.copy");
     if (chrome.extension) {
         $copy.click(function () {
-            chrome.extension.getBackgroundPage().copy($("#callback input").val());
+            chrome.extension.getBackgroundPage().copy($url.val());
             showCopyTip("已复制.")
         });
     } else {
-        // @see http://www.steamdev.com/zclip/
+        // @see http://www.steamdev.com/zclip/ 需要服务端才能正常运行
         $copy.zclip({
                 path: 'lib/ref/ZeroClipboard.swf',
                 copy: function () {
-                    return $("#callback input").val();
+                    return $url.val();
                 },
                 afterCopy: function () {
-                    // 默认会弹个框
+                    // 覆盖默认行为， 默认会弹个框
                     showCopyTip("已复制.")
                 }
             }
@@ -21,9 +58,9 @@ function bindClipboardCopy() {
     }
 
     $copy.poshytip({
-        content: '点击复制链接.',
+        content: '',
         className: 'tip-green',
-//            allowTipHover: false,
+        /* allowTipHover: false, */
         showOn: 'none',
         alignTo: 'target',
         alignX: 'inner-left',
@@ -40,7 +77,7 @@ function bindClipboardCopy() {
     });
 
     // 显示的内容为元素的title
-    $("#editable").poshytip({
+    $editable.poshytip({
         className: 'tip-green',
         offsetX: -5,
         offsetY: 20,
@@ -50,69 +87,76 @@ function bindClipboardCopy() {
 }
 
 function showCopyTip(mesg) {
-    var $copy = $("#callback button.copy");
     $copy.poshytip('update', mesg);
     $copy.poshytip('show');
 }
 
 $(document).ready(function () {
 
-    var flickr = $.flickr();
-
-    var $editable = $("#editable");
-    var $url = $("#callback input");
-
-    // FIXME 暂时注释掉，有时没网络很慢！
-    /*    var user = flickr.user();
-     if (user) {
+    // FIXME 暂时注释掉，有时没网络/很慢！
+    /*
+     flickr.user(function(user){
      $("#userinfo div").text(user.username);
      $("#userinfo img").attr("src", user.icon);
-     }
+     });
      */
+
     bindClipboardCopy();
 
     function getUploadStaticImage(photoid) {
-        $url.val(flickr.photo(photoid));
+        flickr.photo(
+            photoid,
+            function (url) {
+                $url.val(url);
+            }
+        );
     }
 
-    function updateUploadStaticImage(ticket) {
-        function hit(callback) {
-            setTimeout(function () {
-                var photoid = flickr.checkTickets(ticket);
-                if (!photoid) {
-                    hit(callback);
-                } else {
-                    callback(photoid);
-                }
-            }, 1000);
-        }
+    function upload(blob) {
+        $editable.addClass("disabled");
+        $image.attr('src', '#');
 
-        hit(getUploadStaticImage);
+        flickr.upload(
+            blob,
+            {
+                "before": function () {
+                    uploadStatus.update();
+
+                    window.URL = window.URL || window.webkitURL;
+                    var blobUrl = window.URL.createObjectURL(blob);
+
+                    $image.attr('src', blobUrl);
+                },
+                "finish": function (photoid) {
+                    uploadStatus.update();
+
+                    getUploadStaticImage(photoid);
+                    $editable.removeClass("disable");
+                }
+            }
+        );
     }
 
     $editable.on("paste", function () {
         var ele = event.clipboardData.items;
         if (ele) {
+            var hasImg = false;
             for (var i = 0; i < ele.length; ++i) {
                 if (ele[i].kind == 'file' && ele[i].type.indexOf('image/') !== -1) {
+                    hasImg = true;
                     upload(ele[i].getAsFile());
                 }
             }
+            if (!hasImg) {
+                alert("哥，粘的不是图片吖 ~.~ !-- =!=");
+            }
+        } else {
+            console.log("剪贴板没有数据！");
         }
 
         // 阻止默认行为
         event.preventDefault();
     });
-
-    function upload(blob) {
-        var ticket = flickr.upload(blob);
-        updateUploadStaticImage(ticket);
-
-        window.URL = window.URL || window.webkitURL;
-        var blobUrl = window.URL.createObjectURL(blob);
-
-        $('<img />').attr('src', blobUrl).css("max-width", "98%").appendTo("#editable");
-    }
 
     $editable.on("dragover", function () {
         event.stopPropagation();
