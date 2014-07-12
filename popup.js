@@ -107,9 +107,13 @@ $(document).ready(function () {
         flickr.photo(
             photoid,
             function (url) {
-                $url.val(url);
+                updateImagePath(url);
             }
         );
+    }
+
+    function updateImagePath(url){
+        $url.val(url);
     }
 
     function upload(blob) {
@@ -126,6 +130,7 @@ $(document).ready(function () {
                     var blobUrl = window.URL.createObjectURL(blob);
 
                     $image.attr('src', blobUrl);
+                    updateImagePath("");
                 },
                 "finish": function (photoid) {
                     uploadStatus.update();
