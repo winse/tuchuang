@@ -5,28 +5,28 @@ var flickr = $.flickr();
 var $url = $("#callback input");
 var $image = $("#editable img");
 
-var uploadStatus = (function () {
-    var _status = "OK";
+var uploadStatusHandle = (function () {
+    var __status = "OK";
 
     var op = {
         "reset": function () {
-            _status = ''; // 出现异常可以重置！
-            uploadStatus.update();
+            __status = ''; // 出现异常可以重置！
+            uploadStatusHandle.update();
         },
         "update": function () {
-            switch (_status) {
+            switch (__status) {
                 case "OK":
                     $editable.poshytip('update', "正在上传...");
-                    _status = "UP";
+                    __status = "UP";
                     break;
                 case "UP":
                     $editable.poshytip('update', "上传完成！点击复制按钮拷贝链接！");
-                    _status = "F";
-                    setTimeout(uploadStatus.update, 2000);
+                    __status = "F";
+                    setTimeout(uploadStatusHandle.update, 1000);
                     break;
                 default:
                     $editable.poshytip('update', "把图片粘贴到这里.");
-                    _status = "OK";
+                    __status = "OK";
             }
             $editable.poshytip('show');
         }
@@ -37,25 +37,18 @@ var uploadStatus = (function () {
 })();
 
 function bindClipboardCopy() {
-    if (chrome.extension) {
-        $copy.click(function () {
-            chrome.extension.getBackgroundPage().copy($url.val());
-            showCopyTip("已复制.")
-        });
-    } else {
-        // @see http://www.steamdev.com/zclip/ 需要服务端才能正常运行
-        $copy.zclip({
-                path: 'lib/ref/ZeroClipboard.swf',
-                copy: function () {
-                    return $url.val();
-                },
-                afterCopy: function () {
-                    // 覆盖默认行为， 默认会弹个框
-                    showCopyTip("已复制.")
-                }
+    // @see http://www.steamdev.com/zclip/ 需要服务端才能正常运行
+    $copy.zclip({
+            path: 'lib/ref/ZeroClipboard.swf',
+            copy: function () {
+                return $url.val();
+            },
+            afterCopy: function () {
+                // 覆盖默认行为， 默认会弹个框
+                showCopyTip("已复制.")
             }
-        );
-    }
+        }
+    );
 
     $copy.poshytip({
         content: '',
@@ -93,17 +86,9 @@ function showCopyTip(mesg) {
 
 $(document).ready(function () {
 
-    // FIXME 暂时注释掉，有时没网络/很慢！
-    /*
-     flickr.user(function(user){
-     $("#userinfo div").text(user.username);
-     $("#userinfo img").attr("src", user.icon);
-     });
-     */
-
     bindClipboardCopy();
 
-    function getUploadStaticImage(photoid) {
+    function updateStaticImage(photoid) {
         flickr.photo(
             photoid,
             function (url) {
@@ -112,7 +97,7 @@ $(document).ready(function () {
         );
     }
 
-    function updateImagePath(url){
+    function updateImagePath(url) {
         $url.val(url);
     }
 
@@ -124,7 +109,7 @@ $(document).ready(function () {
             blob,
             {
                 "before": function () {
-                    uploadStatus.update();
+                    uploadStatusHandle.update();
 
                     window.URL = window.URL || window.webkitURL;
                     var blobUrl = window.URL.createObjectURL(blob);
@@ -133,9 +118,9 @@ $(document).ready(function () {
                     updateImagePath("");
                 },
                 "finish": function (photoid) {
-                    uploadStatus.update();
+                    uploadStatusHandle.update();
 
-                    getUploadStaticImage(photoid);
+                    updateStaticImage(photoid);
                     $editable.removeClass("disable");
                 }
             }

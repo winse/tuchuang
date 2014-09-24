@@ -1,25 +1,25 @@
 {
-	"name": "A browser action with a popup that upload Image to Flickr.",
-	"version": "0.1",
-	"manifest_version": 2,
-	"app": {
-		"background": {
-			"scripts": ["background.js"]
-		}
-	},
-	"offline_enabled": true,
-	"sandbox": {
-		"pages": ["popup.html"]
-	},
-	"permissions": [
-	"webview",
-	"system.display",
-	"http://*/*",
-	"https://*/*",
-	"contextMenus",
-	"unlimitedStorage",
-	"storage",
-	"fileSystem",
-	"fileSystem.write",
-	"identity"]
+    "name": "图床@Bmob",
+    "version": "0.1",
+    "manifest_version": 2,
+    "app": {
+        "launch": {
+            "local_path": "popup.html"
+        }
+    },
+    "icons": {
+        "64": "image/icon_64.png",
+        "32": "image/icon_32.png"
+    },
+    "offline_enabled": true,
+    "externally_connectable": {
+        "ids": [ "*" ]
+    },
+    "permissions": [
+        "http://*/*",
+        "https://*/*",
+        "contextMenus",
+        "unlimitedStorage",
+        "storage"
+    ]
 }
