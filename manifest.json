@@ -1,16 +1,31 @@
 {
     "name": "A browser action with a popup that upload Image to Flickr.",
     "version": "0.1",
-    "permissions": [
-        "tabs", "http://*/*", "https://*/*"
-    ],
+    
+    /*
     "background": {
         "page": "background.html"
-    },
+    },*/
+	"app": {
+      "background": {
+        "scripts": ["background.js"]
+    }
+   },
+    
+	"offline_enabled": true,
+	/*
+	"permissions": [
+        "tabs", "http://*/*", "https://*/*"
+    ],
     "browser_action": {
         "default_title": "Upload Image to Flickr.",
-        "default_icon": "image/icon_32.png",
+        "default_icon": "image/icon_32.png" ,
         "default_popup": "popup.html"
     },
+	*/
+	
+	"sandbox": {
+      "pages": [ "popup.html" ]
+   },
     "manifest_version": 2
 }

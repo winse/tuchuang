@@ -175,5 +175,10 @@ table {
 
 }
 
+/* --preview */
 
+#preview li {
+    border-bottom: rgb(94, 182, 67) 5px solid;
+    margin: 30px 0;
+}
 
